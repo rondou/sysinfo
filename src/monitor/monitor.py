@@ -10,7 +10,6 @@ import socket
 
 from typing import Any, Dict, List, Optional, NewType, TypeVar
 from subprocess import Popen, PIPE
-from dataclasses import dataclass
 
 AF_INET6 = getattr(socket, 'AF_INET6', object())
 
@@ -34,7 +33,6 @@ duplex_map = {
 }
 
 
-@dataclass
 class Meta:
     type: str
     func: Optional[str] = None
@@ -44,6 +42,25 @@ class Meta:
     path: Optional[str] = None
     args: Optional[List] = None
     kwargs: Optional[Dict] = None
+
+    def __init__(self,
+                type: str,
+                func: Optional[str] = None,
+                cmd: Optional[str] = None,
+                concurrent: Optional[bool] = None,
+                rtype: Optional[str] = 'json',
+                path: Optional[str] = None,
+                args: Optional[List] = None,
+                kwargs: Optional[Dict] = None):
+
+        self.type = type
+        self.func = func
+        self.cmd = cmd
+        self.concurrent = concurrent
+        self.rtype = rtype
+        self.path = path
+        self.args = args
+        self.kwargs = kwargs
 
 
 class BuiltIn:
