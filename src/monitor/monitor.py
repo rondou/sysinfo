@@ -55,18 +55,6 @@ class BuiltIn:
     def protocol_port_info() -> list:
         return [pconn.laddr.port for pconn in psutil.net_connections() if pconn]
 
-    @staticmethod
-    def bytes2human(n):
-        symbols = ('K', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y')
-        prefix = {}
-        for i, s in enumerate(symbols):
-            prefix[s] = 1 << (i + 1) * 10
-        for s in reversed(symbols):
-            if n >= prefix[s]:
-                value = float(n) / prefix[s]
-                return '%.2f%s' % (value, s)
-        return '%.2fB' % (n)
-
     @classmethod
     def network_info(cls, *args, **kwargs) -> dict:
         ifconfig: dict = {}
@@ -87,12 +75,12 @@ class BuiltIn:
                 incoming: dict = {}
                 outgoing: dict = {}
                 io = io_counters[nic]
-                incoming['bytes'] = cls.bytes2human(io.bytes_recv)
+                incoming['bytes'] = io.bytes_recv
                 incoming['pkts'] = io.packets_recv
                 incoming['errs'] = io.errin
                 incoming['drops'] = io.dropin
 
-                outgoing['bytes'] = cls.bytes2human(io.bytes_sent)
+                outgoing['bytes'] = io.bytes_sent
                 outgoing['pkts'] = io.packets_sent
                 outgoing['errs'] = io.errin
                 outgoing['drops'] = io.dropin
@@ -144,10 +132,13 @@ def dict_objectization(data: dict, clz):
 def r_type_generator(res: str, rtype: str):
     result = None
 
-    if rtype == 'json':
-        result = json.loads(res)
-    elif rtype == 'string':
-        result = str(res)
+    try:
+        if rtype == 'json':
+            result = json.loads(res)
+        elif rtype == 'string':
+            result = str(res)
+    except json.JSONDecodeError:
+        result = res
 
     return result
 
@@ -156,8 +147,6 @@ def built_in(meta: Meta) -> str:
     info = getattr(BuiltIn, meta.func)(meta.args, meta.kwargs)
 
     return json.dumps(info)
-
-    #return "in_progress"
 
 
 def executable(meta: Meta) -> str:
@@ -180,7 +169,6 @@ def monitor_generator(data: dict):
 
     if '__meta__' in keys:
         meta = dict_objectization(data['__meta__'], Meta)
-        #print(meta)
         res = getattr(sys.modules[__name__], meta.type)(meta)
         return r_type_generator(res, meta.rtype)
 
