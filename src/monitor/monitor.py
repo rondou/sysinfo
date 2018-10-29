@@ -12,6 +12,15 @@ from typing import Any, Dict, List, Optional, NewType, TypeVar
 from subprocess import Popen, PIPE
 from dataclasses import dataclass
 
+AF_INET6 = getattr(socket, 'AF_INET6', object())
+
+proto_map = {
+    (socket.AF_INET, socket.SOCK_STREAM): 'tcp',
+    (AF_INET6, socket.SOCK_STREAM): 'tcp6',
+    (socket.AF_INET, socket.SOCK_DGRAM): 'udp',
+    (AF_INET6, socket.SOCK_DGRAM): 'udp6',
+}
+
 af_map = {
     socket.AF_INET: 'IPv4',
     socket.AF_INET6: 'IPv6',
@@ -95,6 +104,26 @@ class BuiltIn:
     @staticmethod
     def protocol_port_info() -> list:
         return [pconn.laddr.port for pconn in psutil.net_connections() if pconn]
+
+    @staticmethod
+    def netstat_info(*args, **kwargs) -> list:
+        results = []
+
+        proc_names = {}
+        for p in psutil.process_iter(attrs=['pid', 'name']):
+            proc_names[p.info['pid']] = p.info['name']
+
+        for c in psutil.net_connections(kind='inet'):
+            netstat = {}
+            netstat['proto'] = proto_map[(c.family, c.type)]
+            netstat['laddr'] = "%s:%s" % (c.laddr)
+            netstat['raddr'] = "%s:%s" % (c.raddr) if c.raddr else '-'
+            netstat['procname'] = proc_names.get(c.pid, '?')[:15]
+            netstat['pid'] = c.pid or '-'
+
+            results.append(netstat)
+
+        return results
 
     @classmethod
     def network_info(cls, *args, **kwargs) -> dict:
