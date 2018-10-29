@@ -47,8 +47,41 @@ class BuiltIn:
         result['count'] = psutil.cpu_count()
         return result
 
+    @staticmethod
+    def process_info(*args, **kwargs) -> str:
+        result: dict = {}
+
+        attrs = ['pid', 'cpu_percent', 'memory_percent', 'name', 'cpu_times',
+                 'create_time', 'memory_info', 'status']
+
+        for p in psutil.process_iter():
+            try:
+                pinfo = p.as_dict(attrs, ad_value='')
+            except psutil.NoSuchProcess:
+                continue
+
+            try:
+                user = p.username()
+            except KeyError:
+                if os.name == 'posix':
+                    if pinfo['uids']:
+                        user = str(pinfo['uids'].real)
+                    else:
+                        user = None
+                else:
+                    raise
+            except psutil.Error:
+                user = None
+
+            sub_config = {}
+            sub_config['user'] = user
+            sub_config['command'] = pinfo['name'].strip() or '?'
+            result[pinfo['pid']] = sub_config
+
+        return result
+
     @classmethod
-    def disk_info(cls) -> dict:
+    def disk_info(cls, *args, **kwargs) -> dict:
         return cls.namedtuple_to_dict(psutil.disk_usage('/'))
 
     @staticmethod
