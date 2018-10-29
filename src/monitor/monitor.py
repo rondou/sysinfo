@@ -40,7 +40,7 @@ class Meta:
 class BuiltIn:
 
     @staticmethod
-    def cpu_info() -> dict:
+    def cpu_info(*args, **kwargs) -> dict:
         result: dict = {}
         result['loadavg'] = os.getloadavg()
         result['percent'] = psutil.cpu_percent(interval=1)
@@ -48,7 +48,7 @@ class BuiltIn:
         return result
 
     @staticmethod
-    def process_info(*args, **kwargs) -> str:
+    def process_info(*args, **kwargs) -> dict:
         result: dict = {}
 
         attrs = ['pid', 'cpu_percent', 'memory_percent', 'name', 'cpu_times',
@@ -79,6 +79,14 @@ class BuiltIn:
             result[pinfo['pid']] = sub_config
 
         return result
+
+    @classmethod
+    def memory_info(cls, *args, **kwargs) -> dict:
+        return cls.namedtuple_to_dict(psutil.virtual_memory())
+
+    @classmethod
+    def swap_info(cls, *args, **kwargs) -> dict:
+        return cls.namedtuple_to_dict(psutil.swap_memory())
 
     @classmethod
     def disk_info(cls, *args, **kwargs) -> dict:
@@ -170,6 +178,10 @@ def r_type_generator(res: str, rtype: str):
             result = json.loads(res)
         elif rtype == 'string':
             result = str(res)
+        elif rtype == 'integer':
+            result = int(res)
+        else:
+            result = res
     except json.JSONDecodeError:
         result = res
 
@@ -177,7 +189,10 @@ def r_type_generator(res: str, rtype: str):
 
 
 def built_in(meta: Meta) -> str:
-    info = getattr(BuiltIn, meta.func)(meta.args, meta.kwargs)
+    try:
+        info = getattr(BuiltIn, meta.func)(meta.args, meta.kwargs)
+    except AttributeError:
+        return "BuiltIn is not able to handle {}".format(str(meta.func))
 
     return json.dumps(info)
 
