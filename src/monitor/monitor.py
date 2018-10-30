@@ -3,12 +3,10 @@ import os
 import sys
 
 import json
-import jsontofu
 import jsonpickle
 import psutil
 import socket
 
-from typing import Any, Dict, List, Optional, NewType, TypeVar
 from subprocess import Popen, PIPE
 
 AF_INET6 = getattr(socket, 'AF_INET6', object())
@@ -33,25 +31,25 @@ duplex_map = {
 }
 
 
-class Meta:
-    type: str
-    func: Optional[str] = None
-    cmd: Optional[str] = None
-    concurrent: Optional[bool] = None
-    rtype: Optional[str] = 'json'
-    path: Optional[str] = None
-    args: Optional[List] = None
-    kwargs: Optional[Dict] = None
+class Meta2:
+    type = None
+    func = None
+    cmd = None
+    concurrent = None
+    rtype = 'json'
+    path = None
+    args = None
+    kwargs = None
 
     def __init__(self,
-                type: str,
-                func: Optional[str] = None,
-                cmd: Optional[str] = None,
-                concurrent: Optional[bool] = None,
-                rtype: Optional[str] = 'json',
-                path: Optional[str] = None,
-                args: Optional[List] = None,
-                kwargs: Optional[Dict] = None):
+                type = None,
+                func = None,
+                cmd = None,
+                concurrent = None,
+                rtype = 'json',
+                path = None,
+                args = None,
+                kwargs = None):
 
         self.type = type
         self.func = func
@@ -67,7 +65,7 @@ class BuiltIn:
 
     @staticmethod
     def cpu_info(*args, **kwargs) -> dict:
-        result: dict = {}
+        result = {}
         result['loadavg'] = os.getloadavg()
         result['percent'] = psutil.cpu_percent(interval=1)
         result['count'] = psutil.cpu_count()
@@ -75,7 +73,7 @@ class BuiltIn:
 
     @staticmethod
     def process_info(*args, **kwargs) -> dict:
-        result: dict = {}
+        result = {}
 
         attrs = ['pid', 'cpu_percent', 'memory_percent', 'name', 'cpu_times',
                  'create_time', 'memory_info', 'status']
@@ -144,13 +142,13 @@ class BuiltIn:
 
     @classmethod
     def network_info(cls, *args, **kwargs) -> dict:
-        ifconfig: dict = {}
+        ifconfig = {}
         stats = psutil.net_if_stats()
         io_counters = psutil.net_io_counters(pernic=True)
         for nic, addrs in psutil.net_if_addrs().items():
             sub_config = {}
             if nic in stats:
-                stat: dict = {}
+                stat = {}
                 st = stats[nic]
                 stat['speed'] = st.speed
                 stat['duplex'] = duplex_map[st.duplex]
@@ -159,8 +157,8 @@ class BuiltIn:
                 ifconfig['stats'] = stat
 
             if nic in io_counters:
-                incoming: dict = {}
-                outgoing: dict = {}
+                incoming = {}
+                outgoing = {}
                 io = io_counters[nic]
                 incoming['bytes'] = io.bytes_recv
                 incoming['pkts'] = io.packets_recv
@@ -176,7 +174,7 @@ class BuiltIn:
                 sub_config['outgoing'] = outgoing
 
             for addr in addrs:
-                family: dict = {}
+                family = {}
                 family['address'] = addr.address
                 if addr.broadcast: family['broadcast'] = addr.broadcast
                 if addr.netmask: family['netmask'] = addr.netmask
@@ -189,7 +187,7 @@ class BuiltIn:
 
     @staticmethod
     def namedtuple_to_dict(res) -> dict:
-        data: dict = {}
+        data = {}
         for k in res._fields:
             data[k] = getattr(res, k)
 
@@ -197,23 +195,16 @@ class BuiltIn:
 
 
 def load_json_data_from_json_file(path: str) -> dict:
-    data: dict = None
+    data = None
     with open(path) as json_data_file:
         data = json.load(json_data_file)
 
     return data
 
 
-def dict_objectization(data: dict, clz):
-    try:
-        obj = jsontofu.decode(data, clz)
-        obj
-    except Exception as e:
-        print(data)
-        print("error = ", e)
-        obj = None
-
-    return obj
+def dict_objectization2(data: dict, clz):
+    data['py/object'] = ".".join([clz.__module__, clz.__name__])
+    return jsonpickle.decode(json.dumps(data))
 
 
 def r_type_generator(res: str, rtype: str):
@@ -234,7 +225,7 @@ def r_type_generator(res: str, rtype: str):
     return result
 
 
-def built_in(meta: Meta) -> str:
+def built_in(meta) -> str:
     try:
         info = getattr(BuiltIn, meta.func)(meta.args, meta.kwargs)
     except AttributeError:
@@ -243,17 +234,17 @@ def built_in(meta: Meta) -> str:
     return json.dumps(info)
 
 
-def executable(meta: Meta) -> str:
+def executable(meta) -> str:
     stdout, stderr = Popen([meta.cmd] + meta.args, stdout=PIPE, stderr=PIPE, stdin=PIPE).communicate()
     return stdout.decode('utf-8')
 
 
-def shell(meta: Meta) -> str:
+def shell(meta) -> str:
     stdout, stderr = Popen(meta.cmd, shell=True, stdout=PIPE, stderr=PIPE, stdin=PIPE).communicate()
     return stdout.decode('utf-8')
 
 
-def info(meta: Meta) -> str:
+def info(meta) -> str:
     return json.dumps(monitor_generator(data=load_json_data_from_json_file(meta.path)))
 
 
@@ -262,7 +253,7 @@ def monitor_generator(data: dict):
     keys = data.keys()
 
     if '__meta__' in keys:
-        meta = dict_objectization(data['__meta__'], Meta)
+        meta = dict_objectization2(data['__meta__'], Meta2)
         res = getattr(sys.modules[__name__], meta.type)(meta)
         return r_type_generator(res, meta.rtype)
 
@@ -277,9 +268,4 @@ def monitor_generator(data: dict):
 
 
 if __name__ == '__main__':
-    data = load_json_data_from_json_file(path='/Users/rondouchen/workspace/Flo/reality_monitor/etc/reality_monitor.json')
-    result = monitor_generator(data=data)
-
-    j = json.dumps(result)
-
-    print(j)
+    pass
