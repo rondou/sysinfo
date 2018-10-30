@@ -2,6 +2,20 @@
 Reality monitor
 =====================
 
+Introduction
+-----------
+
+The main goal
+````````````
+
+Collect the system information from you specified.
+
+Operation
+````````````
+
+This tool will collect data and show in the monitor according to the instructions.
+The instruction is a JSON file.
+
 Development
 -----------
 
