@@ -58,5 +58,15 @@
       "rtype": "string",
       "concurrent": false
     }
+  },
+  "networks": {
+    "__meta__": {
+      "type": "built_in",
+      "func": "network_info",
+      "args": [],
+      "kwargs": {},
+      "rtype": "json",
+      "concurrent": false
+    }
   }
 }
