@@ -63,6 +63,10 @@ setuptools.setup(
         'src', exclude=['contrib', 'docs', 'tests']),
     package_dir={'': 'src'},
 
+    package_data = {
+        'monitor': ['etc/*.json'],
+    },
+
     # Alternatively, if you want to distribute just a my_module.py, uncomment
     # this:
     #   py_modules=["my_module"],
