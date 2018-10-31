@@ -12,7 +12,8 @@ from . import monitor
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('-s', '--source', default='', help='json script path')
-    parser.add_argument('-d', '--default', default='', help='use default script', action='store_true')
+    parser.add_argument('-d', '--default', default=False, help='use default script', action='store_true')
+    parser.add_argument('-show', '-show--defaultscript', default='', help='show default json script', action='store_true')
     return parser.parse_args(), parser
 
 
@@ -48,28 +49,32 @@ def create_default_json_file():
 
 
 def default_json_file():
-    path = pkg_resources.resource_filename(__name__, 'etc/built_in.json')
-    if os.path.isfile(path):
-        return path
-
-    return create_default_json_file()
+    return pkg_resources.resource_filename(__name__, 'etc/built_in.json')
 
 
 def main():
     args, argsrser = parse_args()
 
-    if args.source:
+    source_path = None
+    if args.show:
+        print(json.dumps(monitor.load_json_data_from_json_file(path=default_json_file())))
+
+    elif args.source:
         source_path = args.source
 
     elif args.default:
         source_path = default_json_file()
+        if not os.path.isfile(source_path):
+            source_path = create_default_json_file()
 
-    data = monitor.load_json_data_from_json_file(path=source_path)
-    result = monitor.monitor_generator(data=data)
 
-    j = json.dumps(result)
+    if source_path:
+        data = monitor.load_json_data_from_json_file(path=source_path)
+        result = monitor.monitor_generator(data=data)
 
-    print(j)
+        j = json.dumps(result)
+
+        print(j)
 
 if __name__ == '__main__':
     main()
