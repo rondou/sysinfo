@@ -65,15 +65,15 @@ class BuiltIn:
 
     @staticmethod
     def cpu_info(*args, **kwargs) -> dict:
-        result = {}
-        result['loadavg'] = os.getloadavg()
-        result['percent'] = psutil.cpu_percent(interval=1)
-        result['count'] = psutil.cpu_count()
-        return result
+        retdict = {}
+        retdict['loadavg'] = os.getloadavg()
+        retdict['percent'] = psutil.cpu_percent(interval=1)
+        retdict['count'] = psutil.cpu_count()
+        return retdict
 
     @staticmethod
     def process_info(*args, **kwargs) -> dict:
-        result = {}
+        retdict = {}
 
         attrs = ['pid', 'cpu_percent', 'memory_percent', 'name', 'cpu_times',
                  'create_time', 'memory_info', 'status']
@@ -100,9 +100,9 @@ class BuiltIn:
             sub_config = {}
             sub_config['user'] = user
             sub_config['command'] = pinfo['name'].strip() or '?'
-            result[pinfo['pid']] = sub_config
+            retdict[pinfo['pid']] = sub_config
 
-        return result
+        return retdict
 
     @classmethod
     def memory_info(cls, *args, **kwargs) -> dict:
@@ -122,11 +122,12 @@ class BuiltIn:
 
     @staticmethod
     def netstat_info(*args, **kwargs) -> list:
-        results = []
+        retlist = []
 
         proc_names = {}
-        for p in psutil.process_iter(attrs=['pid', 'name']):
-            proc_names[p.info['pid']] = p.info['name']
+        for p in psutil.process_iter():
+            p_dict = p.as_dict(attrs=['pid', 'name'])
+            proc_names[p_dict['pid']] = p_dict['name']
 
         for c in psutil.net_connections(kind='inet'):
             netstat = {}
@@ -136,9 +137,9 @@ class BuiltIn:
             netstat['procname'] = proc_names.get(c.pid, '?')[:15]
             netstat['pid'] = c.pid or '-'
 
-            results.append(netstat)
+            retlist.append(netstat)
 
-        return results
+        return retlist
 
     @classmethod
     def network_info(cls, *args, **kwargs) -> dict:
