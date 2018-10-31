@@ -8,7 +8,7 @@ from . import monitor
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-p', '--path', default='', help='json script path')
+    parser.add_argument('-s', '--source', default='', help='json script path')
     return parser.parse_args(), parser
 
 
