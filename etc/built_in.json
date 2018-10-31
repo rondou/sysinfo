@@ -1,0 +1,62 @@
+{
+  "cpu": {
+    "__meta__": {
+      "type": "built_in",
+      "func": "cpu_info",
+      "args": [],
+      "kwargs": {},
+      "rtype": "json",
+      "concurrent": false
+    }
+  },
+  "disk": {
+    "__meta__": {
+      "type": "built_in",
+      "func": "disk_info",
+      "args": [],
+      "kwargs": {},
+      "rtype": "json",
+      "concurrent": false
+    }
+  },
+  "process": {
+    "__meta__": {
+      "type": "built_in",
+      "func": "process_info",
+      "args": [],
+      "kwargs": {},
+      "rtype": "string",
+      "concurrent": false
+    }
+  },
+  "swap": {
+    "__meta__": {
+      "type": "built_in",
+      "func": "swap_info",
+      "args": [],
+      "kwargs": {},
+      "rtype": "json",
+      "concurrent": false
+    }
+  },
+  "memory": {
+    "__meta__": {
+      "type": "built_in",
+      "func": "memory_info",
+      "args": [],
+      "kwargs": {},
+      "rtype": "json",
+      "concurrent": false
+    }
+  },
+  "netstat": {
+    "__meta__": {
+      "type": "built_in",
+      "func": "netstat_info",
+      "args": [],
+      "kwargs": {},
+      "rtype": "string",
+      "concurrent": false
+    }
+  }
+}
