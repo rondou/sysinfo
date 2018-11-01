@@ -28,7 +28,7 @@ setuptools.setup(
     long_description=long_description,
 
     # The project's main homepage.
-    url='https://github.com/rondou/reality-monitor',
+    url='https://github.com/rondou/sys-info',
 
     # Author details
     author='Rondou Chen',

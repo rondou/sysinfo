@@ -54,13 +54,13 @@ Installation
 
 .. code:: sh
 
-    pip install git+git://github.com/rondou/reality-monitor.git
+    pip install git+git://github.com/rondou/sys-info.git
 
 or
 
 .. code:: sh
 
-    pipenv install 'git+ssh://git@github.com/rondou/reality-monitor.git#egg=reality-monitor'
+    pipenv install 'git+ssh://git@github.com/rondou/sys-inf.git#egg=sys-info'
 
 
 Execute the code
@@ -81,11 +81,11 @@ Here is script.json content the key __meta__ is a magic key.
         }
     }
 
-Run reality-monitor and specify json file.
+Run sys-info and specify json file.
 
 .. code:: sh
 
-    sys-inf -p etc/script.json | jq .
+    sys-info -p etc/script.json | jq .
 
 You will get the follow result.
 
