@@ -60,7 +60,7 @@ or
 
 .. code:: sh
 
-    pipenv install 'git+ssh://git@github.com/rondou/sys-inf.git#egg=sys-info'
+    pipenv install 'git+ssh://git@github.com/rondou/sys-info.git#egg=sys-info'
 
 
 Execute the code
