@@ -17,7 +17,7 @@ with open(os.path.join(here, 'README.rst'), encoding='utf-8') as f:
     long_description = f.read()
 
 setuptools.setup(
-    name='sys-info',
+    name='sysinfo',
 
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
@@ -28,7 +28,7 @@ setuptools.setup(
     long_description=long_description,
 
     # The project's main homepage.
-    url='https://github.com/rondou/sys-info',
+    url='https://github.com/rondou/sysinfo',
 
     # Author details
     author='Rondou Chen',
@@ -99,7 +99,7 @@ setuptools.setup(
     # pip to create the appropriate form of executable for the target platform.
     entry_points={
         'console_scripts': [
-            'sys-info=sysinfo.__main__:main',
+            'sysinfo=sysinfo.__main__:main',
         ],
     },
 )
