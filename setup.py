@@ -17,7 +17,7 @@ with open(os.path.join(here, 'README.rst'), encoding='utf-8') as f:
     long_description = f.read()
 
 setuptools.setup(
-    name='reality-monitor',
+    name='sys-info',
 
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
@@ -64,7 +64,7 @@ setuptools.setup(
     package_dir={'': 'src'},
 
     package_data = {
-        'monitor': ['etc/*.json'],
+        'sysinfo': ['etc/*.json'],
     },
 
     # Alternatively, if you want to distribute just a my_module.py, uncomment
@@ -99,7 +99,7 @@ setuptools.setup(
     # pip to create the appropriate form of executable for the target platform.
     entry_points={
         'console_scripts': [
-            'reality-monitor=monitor.__main__:main',
+            'sys-info=sysinfo.__main__:main',
         ],
     },
 )

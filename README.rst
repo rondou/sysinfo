@@ -1,5 +1,5 @@
 =====================
-Reality monitor
+System Information
 =====================
 
 Introduction
@@ -85,7 +85,7 @@ Run reality-monitor and specify json file.
 
 .. code:: sh
 
-    reality-monitor -p etc/script.json | jq .
+    sys-inf -p etc/script.json | jq .
 
 You will get the follow result.
 
