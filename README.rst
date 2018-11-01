@@ -54,13 +54,13 @@ Installation
 
 .. code:: sh
 
-    pip install git+git://github.com/rondou/sys-info.git
+    pip install git+git://github.com/rondou/sysinfo.git
 
 or
 
 .. code:: sh
 
-    pipenv install 'git+ssh://git@github.com/rondou/sys-info.git#egg=sys-info'
+    pipenv install 'git+ssh://git@github.com/rondou/sysinfo.git#egg=sysinfo'
 
 
 Execute the code
@@ -81,11 +81,11 @@ Here is script.json content the key __meta__ is a magic key.
         }
     }
 
-Run sys-info and specify json file.
+Run sysinfo and specify json file.
 
 .. code:: sh
 
-    sys-info -p etc/script.json | jq .
+    sysinfo -p etc/script.json | jq .
 
 You will get the follow result.
 
