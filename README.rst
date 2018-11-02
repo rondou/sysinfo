@@ -54,13 +54,13 @@ Installation
 
 .. code:: sh
 
-    pip install git+git://github.com/rondou/sysinfo.git
+    pip install git+git://github.com/FloTechnologies/flo-device-sysinfo.git
 
 or
 
 .. code:: sh
 
-    pipenv install 'git+ssh://git@github.com/rondou/sysinfo.git#egg=sysinfo'
+    pipenv install 'git+ssh://git@github.com/FloTechnologies/flo-device-sysinfo.git#egg=sysinfo'
 
 
 Execute the code
