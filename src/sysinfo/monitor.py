@@ -218,6 +218,8 @@ def r_type_generator(res: str, rtype: str):
             result = str(res)
         elif rtype == 'integer':
             result = int(res)
+        elif rtype == 'splitlines':
+            result = json.loads(json.dumps(list(res.splitlines())))
         else:
             result = res
     except json.JSONDecodeError:
