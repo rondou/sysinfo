@@ -40,6 +40,7 @@ class Meta2:
     path = None
     args = None
     kwargs = None
+    splitlines = False
 
     def __init__(self,
                 type = None,
@@ -49,7 +50,8 @@ class Meta2:
                 rtype = 'json',
                 path = None,
                 args = None,
-                kwargs = None):
+                kwargs = None,
+                splitlines = False):
 
         self.type = type
         self.func = func
@@ -59,6 +61,7 @@ class Meta2:
         self.path = path
         self.args = args
         self.kwargs = kwargs
+        self.splitlines = splitlines
 
 
 class BuiltIn:
@@ -237,6 +240,9 @@ def built_in(meta) -> str:
 
 def executable(meta) -> str:
     stdout, stderr = Popen([meta.cmd] + meta.args, stdout=PIPE, stderr=PIPE, stdin=PIPE).communicate()
+    if meta.splitlines:
+        return json.dumps(list(map(lambda s: s.decode('utf-8'), stdout.splitlines())))
+
     return stdout.decode('utf-8')
 
 
