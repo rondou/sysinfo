@@ -248,7 +248,14 @@ def shell(meta) -> str:
 
 
 def info(meta) -> str:
-    return json.dumps(monitor_generator(data=load_json_data_from_json_file(meta.path)))
+    try:
+        data = load_json_data_from_json_file(meta.path)
+    except FileNotFoundError:
+        return "FileNotFoundError"
+    except json.JSONDecodeError:
+        return "JSONDecodeError"
+
+    return json.dumps(monitor_generator(data=data))
 
 
 def monitor_generator(data: dict):
