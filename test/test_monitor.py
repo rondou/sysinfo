@@ -31,3 +31,13 @@ def test_info_raises(mocker):
                  side_effect=json.JSONDecodeError(msg='test', doc='{"keys"}', pos=7))
 
     assert monitor.info(meta) == 'JSONDecodeError'
+
+
+def test_load_json_file(mocker):
+    json_load = mocker.patch('json.load', return_value=None)
+
+    with mocker.patch('builtins.open', new_callable=mocker.mock_open()) as m:
+        monitor.load_json_data_from_json_file('/test/4')
+
+        m.assert_called_once_with('/test/4')
+        assert json_load.called
