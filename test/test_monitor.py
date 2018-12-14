@@ -41,3 +41,27 @@ def test_load_json_file(mocker):
 
         m.assert_called_once_with('/test/4')
         assert json_load.called
+
+
+def test_dict_objectization2(mocker):
+    meta = {
+      "type": "built_in",
+      "func": "process_info",
+      "args": [],
+      "kwargs": {},
+      "rtype": "string",
+      "concurrent": True
+    }
+
+    dict_obj2 = mocker.patch('jsonpickle.decode', return_value=None)
+    monitor.dict_objectization2(meta, monitor.Meta2)
+
+    assert json.loads(dict_obj2.call_args[0][0]) == json.loads('''
+                                                               {"type": "built_in",
+                                                                "args": [],
+                                                                "rtype": "string",
+                                                                "kwargs": {},
+                                                                "concurrent": true,
+                                                                "func": "process_info",
+                                                                "py/object": "src.sysinfo.monitor.Meta2"}
+                                                               ''')
